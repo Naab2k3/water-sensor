@@ -1,0 +1,114 @@
+======================================================================
+            SƠ ĐỒ KẾT NỐI HỆ THỐNG GIÁM SÁT HỒ NƯỚC
+======================================================================
+
+┌─────────────────┐      ┌──────────────────┐     ┌────────────────┐
+│                 │      │                  │     │                │
+│   SDR-120-24    │      │  Level Transmitter │     │     DHT22      │
+│   (Nguồn 24V)   │      │    QDY30A-B      │     │ (Nhiệt độ/Ẩm)  │
+│                 │      │                  │     │                │
+└────────┬────────┘      └────────┬─────────┘     └───────┬────────┘
+         │                        │                       │
+         │                        │                       │
+         │   ┌───────────────────┐│  ┌──────────────────┐ │
+         │   │                   ││  │                  │ │
+         └───┤ VCC           GND ├┘  │ MAX31855        │ │
+             │                   │   │ (Nhiệt độ)      │ │
+             │                   │   │                  │ │
+             │     Bộ chuyển đổi │   └─────┬─┬─┬───────┘ │
+             │      RS485-UART   │         │ │ │         │
+             │                   │         │ │ │         │
+             │   A           B   │         │ │ │         │
+             └───┬───────────┬───┘         │ │ │         │
+                 │           │             │ │ │         │
+                 │           │             │ │ │         │
+┌────────────────┼───────────┼─────────────┼─┼─┼─────────┼────────────┐
+│                │           │             │ │ │         │            │
+│                │           │             │ │ │         │            │
+│     TX(GP8)    │           │       SCK(GP18)│ │         │            │
+│     ◄──────────┘           │         ◄──────┘ │         │            │
+│                            │                  │         │            │
+│     RX(GP9)                │      MISO(GP16)  │         │            │
+│     ◄────────────────┐     │         ◄────────┘         │            │
+│                      │     │                            │            │
+│                      │     │       CS(GP17)             │            │
+│                      │     │         ◄──────────────────┘            │
+│     Raspberry Pi     │     │                                         │
+│        Pico          │     │       DATA(GP15)                        │
+│                      │     │         ◄────────────────────────┐      │
+│                      │     │                                  │      │
+│                      │     │                                  │      │
+│                      │     │                                  │      │
+└──────────────────────┼─────┼──────────────────────────────────┼──────┘
+                       │     │                                  │
+                       │     │                                  │
+┌─────────────────────┐│     │┌────────────────────────────────┐│
+│                     ││     ││                                ││
+│   Iriv IO Controller││     ││            PC/Điện thoại       ││
+│                     ││     ││            (Kết nối WiFi)      ││
+│                     ││     ││                                ││
+└─────────────────────┘│     │└────────────────────────────────┘│
+                       │     │                                  │
+                       │     │                                  │
+                       ▼     ▼                                  ▼
+                   ┌─────────────────┐                  ┌─────────────┐
+                   │                 │                  │             │
+                   │  Mạng WiFi      │◄─────────────────┤  Internet   │
+                   │                 │                  │             │
+                   └─────────────────┘                  └─────────────┘
+
+======================================================================
+                      CHI TIẾT KẾT NỐI
+======================================================================
+
+1. NGUỒN ĐIỆN SDR-120-24 (24V):
+   - Output 24V: Kết nối với VCC của QDY30A-B và Iriv IO Controller
+   - GND: Kết nối với GND chung của hệ thống
+
+2. LEVEL TRANSMITTER QDY30A-B:
+   - VCC: Kết nối với nguồn 24V từ SDR-120-24
+   - GND: Kết nối với GND chung
+   - A (RS485+): Kết nối với cổng A của bộ chuyển đổi RS485-UART
+   - B (RS485-): Kết nối với cổng B của bộ chuyển đổi RS485-UART
+
+3. BỘ CHUYỂN ĐỔI RS485-UART:
+   - TX: Kết nối với GP8 (UART1 TX) của Raspberry Pi Pico
+   - RX: Kết nối với GP9 (UART1 RX) của Raspberry Pi Pico
+   - VCC: Kết nối với 3.3V của Raspberry Pi Pico
+   - GND: Kết nối với GND chung
+
+4. MAX31855:
+   - VCC: Kết nối với 3.3V của Raspberry Pi Pico
+   - GND: Kết nối với GND chung
+   - SCK: Kết nối với GP18 (SPI0 SCK) của Raspberry Pi Pico
+   - MISO: Kết nối với GP16 (SPI0 MISO) của Raspberry Pi Pico
+   - CS: Kết nối với GP17 của Raspberry Pi Pico
+   - Thermocouple: Kết nối với cảm biến nhiệt độ đặt trong hồ nước
+
+5. DHT22:
+   - VCC: Kết nối với 3.3V của Raspberry Pi Pico
+   - GND: Kết nối với GND chung
+   - DATA: Kết nối với GP15 của Raspberry Pi Pico
+   - Lưu ý: Cần thêm điện trở kéo lên (pull-up) 10kΩ giữa VCC và DATA
+
+6. RASPBERRY PI PICO:
+   - Cấp nguồn qua micro USB hoặc qua pin VSYS (5V)
+   - Kết nối mạng WiFi qua thông tin cấu hình trong file main.py
+   - Chạy web server để cung cấp giao diện truy cập từ xa
+
+7. IRIV IO CONTROLLER:
+   - Cấp nguồn 24V từ SDR-120-24
+   - Kết nối với mạng WiFi cục bộ
+   - Cấu hình theo hướng dẫn của nhà sản xuất
+   - Có thể tích hợp với hệ thống để mở rộng chức năng I/O
+
+======================================================================
+                      LƯU Ý AN TOÀN
+======================================================================
+
+1. LUÔN NGẮT NGUỒN khi thực hiện kết nối hoặc thay đổi dây
+2. Đảm bảo không có dây nào bị hở hoặc tiếp xúc với các phần kim loại
+3. Kiểm tra kỹ cực DƯƠNG/ÂM khi kết nối nguồn
+4. Cẩn thận khi làm việc với điện áp 24V
+5. Bảo vệ các linh kiện điện tử khỏi nước và độ ẩm cao
+6. Lắp đặt toàn bộ hệ thống trong hộp kín để bảo vệ khỏi các tác động bên ngoài
