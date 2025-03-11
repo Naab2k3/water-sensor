@@ -1,0 +1,33 @@
+{
+    "mqtt_server": "your_mqtt_server",
+    "mqtt_port": 1883,
+    "mqtt_user": "your_username",
+    "mqtt_password": "your_password",
+    "mqtt_topic_prefix": "water_sensor/",
+    "mqtt_base_topic":"water/tank",
+    "mqtt_tank_number": 8,
+    "tank_height_cm": 100,
+    "tank_length_cm": 200,
+    "tank_width_cm": 150,
+    
+    "rs485_uart_id": 1,
+    "rs485_tx_pin": 24,
+    "rs485_rx_pin": 25,
+    "rs485_baudrate": 9600,
+    "qdy30a_sensor_address": 1,
+    "ethernet": {
+        "spi_id": 0,
+        "spi_sck": 18,
+        "spi_mosi": 19,
+        "spi_miso": 16,
+        "cs_pin": 17,
+        "reset_pin": 20,
+        "use_dhcp": true,
+        "static_ip": {
+            "ip": "192.168.1.100",
+            "subnet": "255.255.255.0",
+            "gateway": "192.168.1.1",
+            "dns": "8.8.8.8"
+        }
+    }
+}
